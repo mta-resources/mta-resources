@@ -1,0 +1,5 @@
+<meta>
+  <info author="Stanley Sathler" version="0.0.1" name="sms_system" description="A SMS system useful for RPGs which has smartphones"/>
+
+  <script src="client/C_Interface.lua" type="client"/>
+</meta>
