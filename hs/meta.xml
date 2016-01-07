@@ -1,0 +1,12 @@
+<meta>
+  <info author="Stanley Sathler" name="house_system" description="Description unavailable" version="0.0.1" type="script"/>
+
+  <script src="shared/InteriorsShared.lua" type="shared"/>
+  <script src="shared/HouseLocationsShared.lua" type="shared"/>
+
+  <script src="client/UtilitiesClient.lua" type="client"/>
+  <script src="client/ExternalPanelGUIClient.lua" type="client"/>
+  <script src="client/MainClient.lua" type="client"/>
+
+  <script src="server/MainServer.lua" type="server"/>
+</meta>
