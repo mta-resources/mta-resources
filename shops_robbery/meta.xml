@@ -1,0 +1,7 @@
+<meta>
+  <info author="Stanley Sathler" description="You can rob shops when on Criminal's team" version="0.0.1" type="script"/>
+  <script src="shared/Sh_ShopInteriors.lua" type="shared"/>
+  <script src="shared/Sh_ShopLocations.lua" type="shared"/>
+  <script src="server/S_ShopManager.lua" type="server"/>
+  <script src="server/S_LogicalRobbery.lua" type="server"/>
+</meta>

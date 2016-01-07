@@ -27,8 +27,7 @@ function createMainWindow()
   local windPosY      = screenHeight - windHeight - 30
   elements.mainWindow = guiCreateWindow(windPosX, windPosY, windWidth, windHeight, "App title", false)
 
-  --buildMainScreen()
-  buildConversationScreen()
+  buildMainScreen()
   isAppOpen = true
 end
 
@@ -47,31 +46,6 @@ function hideMainScreen()
 end
 
 ------------------------------------------------------------
--- Shows app's main screen, with tabbed options
-------------------------------------------------------------
-function showMainScreen()
-  guiSetVisible(elements.mainTabPanel, true)
-end
-
-------------------------------------------------------------
--- Hides conversation screen elements
-------------------------------------------------------------
-function hideConversationScreen()
-  guiSetVisible(elements.conversationMemo, false)
-  guiSetVisible(elements.conversationMessage, false)
-  guiSetVisible(elements.conversationSendMessage, false)
-end
-
-------------------------------------------------------------
--- Shows conversation screen elements
-------------------------------------------------------------
-function showConversationScreen()
-  guiSetVisible(elements.conversationMemo, true)
-  guiSetVisible(elements.conversationMessage, true)
-  guiSetVisible(elements.conversationSendMessage, true)
-end
-
-------------------------------------------------------------
 -- Creates the main app's screen, with tabbed options
 ------------------------------------------------------------
 function buildMainScreen()
@@ -83,13 +57,20 @@ function buildMainScreen()
   -- Creates conversation tab elements
   elements.conversationsList      = guiCreateGridList(0, 0, 1, 0.90, true, elements.conversationsTab)
   elements.conversationListColumn = guiGridListAddColumn(elements.conversationsList, "Conversations", 0.9)
-  loadAllConversations(elements.conversationsList, elements.conversationListColumn)
   elements.btnSeeConversation     = guiCreateButton(0, 0.90, 1, 0.10, "View conversation", true, elements.conversationsTab)
+  loadAllConversations(elements.conversationsList, elements.conversationListColumn)
 
   -- Creates contacts list
   elements.peopleList       = guiCreateGridList(0, 0, 1, 1, true, elements.peopleTab)
   elements.peopleListColumn = guiGridListAddColumn(elements.peopleList, "Players online", 0.9)
   loadAllPeople(elements.peopleList, elements.peopleListColumn)
+
+  addEventHandler("onClientGUIClick", elements.btnSeeConversation, openConversationScreen)
+end
+
+function openConversationScreen()
+  buildConversationScreen()
+  hideMainScreen()
 end
 
 ------------------------------------------------------------
