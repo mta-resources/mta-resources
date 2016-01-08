@@ -66,11 +66,20 @@ function createHouseAccount(index)
   return account
 end
 
+------------------------------------------------------------------
+-- Buy a house
+------------------------------------------------------------------
 function buyHouse(house)
   local playerMoney = getPlayerMoney(client)
   local price       = getElementData(house, "price")
-  if playerMoney < price then return false end -- insert message later
+
+  if playerMoney < price then
+    outputChatBox("You do not have enough money to buy this house.", client, 200, 0, 0)
+    return false
+  end
+
   takePlayerMoney(client, price)
+  setElementData(house, "owner", )
 end
 addEvent("buyHouseEvent", true)
 addEventHandler("buyHouseEvent", resourceRoot, buyHouse)
