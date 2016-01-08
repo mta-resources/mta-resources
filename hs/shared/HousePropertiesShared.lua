@@ -3,14 +3,14 @@
 ------------------------------------------------------------------
 HousePropertiesShared = {
   dbProperties = {
-    owner = "owner",
-    price = "price",
-    open = "open",
-    forSale = "for_sale",
-    interior = "interior",
-    door_x = "door_x",
-    door_y = "door_y",
-    door_z = "door_z"
+    owner = {"owner", "NGCHouseManager"},
+    price = {"price", 0},
+    open = {"open", true},
+    forSale = {"for_sale", true},
+    interior = {"interior", false},
+    doorX = {"door_x", false},
+    doorY = {"door_y", false},
+    doorZ = {"door_z", false}
   },
 }
 

@@ -6,6 +6,7 @@ MainServer = {
   accPrefix = "NGC_House_",
   accPassword = "NGC$House@System12j",
   accDataList = {},
+  dbProperties = HousePropertiesShared.dbProperties
 }
 
 ------------------------------------------------------------------
@@ -24,27 +25,29 @@ function createHouseIcons()
     local icon = createPickup(x, y, z, 3, 1273)
     
     local account = getHouseAccount(index)
-    setElementData(icon, "is_house_icon", true)
-    setElementData(icon, "owner", getAccountData(account, "owner") or nil)
-    setElementData(icon, "price", getAccountData(account, "price") or 0)
-    setElementData(icon, "for_sale", getAccountData(account, "for_sale") or true)
-    setElementData(icon, "open", getAccountData(account, "open") or true)
-    setElementData(icon, "interior", getAccountData(account, "interior"))
-    setElementData(icon, "entrance_x", getAccountData(account, "entrance_x"))
-    setElementData(icon, "entrance_y", getAccountData(account, "entrance_y"))
-    setElementData(icon, "entrance_z", getAccountData(account, "entrance_z"))
+    if not account then account = createHouseAccount(index) end
 
-    outputChatBox(getAccountName(account) .. " ::::: " .. getAccountData(account, "price"))
+    setElementData(icon, "is_house_icon", true)
+    getHouseAccountDataAndSaveIntoElementData(icon, account)
   end
 end
 
 ------------------------------------------------------------------
--- Get a house account
+-- Gets a house account
 ------------------------------------------------------------------
 function getHouseAccount(index)
   local account = getAccount(obj.accPrefix .. index, obj.accPassword)
-  if account then return account end
-  return createHouseAccount(index)
+  if not account then return false end
+  return account
+end
+
+------------------------------------------------------------------
+-- Gets all informations saved in account data and stores in element data
+------------------------------------------------------------------
+function getHouseAccountDataAndSaveIntoElementData(icon, account)
+  for i, property in pairs(obj.dbProperties) do
+    setElementData(icon, property[1], getAccountData(account, property[1]) or property[2])
+  end
 end
 
 ------------------------------------------------------------------
@@ -54,14 +57,14 @@ function createHouseAccount(index)
   local account = addAccount(obj.accPrefix .. index, obj.accPassword)
   outputChatBox("CREATING ACCOUNT: " .. getAccountName(account))
 
-  setAccountData(account, "owner", nil)
-  setAccountData(account, "price", obj.houses[index].firstPrice)
-  setAccountData(account, "for_sale", true)
-  setAccountData(account, "open", true)
-  setAccountData(account, "interior", obj.houses[index].interior.interior)
-  setAccountData(account, "entrance_x", obj.houses[index].interior.door[1])
-  setAccountData(account, "entrance_y", obj.houses[index].interior.door[2])
-  setAccountData(account, "entrance_z", obj.houses[index].interior.door[3])
+  setAccountData(account, obj.dbProperties.owner[1], obj.dbProperties.owner[2])
+  setAccountData(account, obj.dbProperties.price[1], obj.houses[index].firstPrice)
+  setAccountData(account, obj.dbProperties.forSale[1], obj.dbProperties.owner[2])
+  setAccountData(account, obj.dbProperties.open[1], obj.dbProperties.open[2])
+  setAccountData(account, obj.dbProperties.interior[1], obj.houses[index].interior.interior)
+  setAccountData(account, obj.dbProperties.doorX[1], obj.houses[index].interior.door[1])
+  setAccountData(account, obj.dbProperties.doorY[1], obj.houses[index].interior.door[2])
+  setAccountData(account, obj.dbProperties.doorZ[1], obj.houses[index].interior.door[3])
 
   return account
 end
@@ -71,7 +74,7 @@ end
 ------------------------------------------------------------------
 function buyHouse(house)
   local playerMoney = getPlayerMoney(client)
-  local price       = getElementData(house, "price")
+  local price       = getElementData(house, obj.dbProperties.price[1])
 
   if playerMoney < price then
     outputChatBox("You do not have enough money to buy this house.", client, 200, 0, 0)
@@ -79,7 +82,6 @@ function buyHouse(house)
   end
 
   takePlayerMoney(client, price)
-  setElementData(house, "owner", )
 end
 addEvent("buyHouseEvent", true)
 addEventHandler("buyHouseEvent", resourceRoot, buyHouse)
@@ -105,7 +107,7 @@ addCommandHandler("removeHouseAccounts", removeAllHouseAccount)
 -- Check if player is the house owner
 ------------------------------------------------------------------
 function isPlayerHouseOwner(house)
-  local houseOwnerAccount = getElementData(house, "owner") or false
+  local houseOwnerAccount = getElementData(house, obj.dbProperties.owner[1]) or false
   local playerAccount     = getPlayerAccount(client)
   local result            = false
   if houseOwnerAccount == playerAccount then result = true end
@@ -118,10 +120,10 @@ addEventHandler("isPlayerHouseOwner", resourceRoot, isPlayerHouseOwner)
 -- 
 ------------------------------------------------------------------
 function takePlayerToHouse(house)
-  local interior    = getElementData(house, "interior")
-  local entrance_x  = getElementData(house, "entrance_x")
-  local entrance_y  = getElementData(house, "entrance_y")
-  local entrance_z  = getElementData(house, "entrance_z")
+  local interior    = getElementData(house, obj.dbProperties.interior[1])
+  local entrance_x  = getElementData(house, obj.dbProperties.doorX[1])
+  local entrance_y  = getElementData(house, obj.dbProperties.doorY[1])
+  local entrance_z  = getElementData(house, obj.dbProperties.doorZ[1])
   setElementInterior(client, interior)
   setElementPosition(client, entrance_x, entrance_y, entrance_z)
 end

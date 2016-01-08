@@ -3,6 +3,7 @@
 
   <script src="shared/InteriorsShared.lua" type="shared"/>
   <script src="shared/HouseLocationsShared.lua" type="shared"/>
+  <script src="shared/HousePropertiesShared.lua" type="shared"/>
 
   <script src="client/UtilitiesClient.lua" type="client"/>
   <script src="client/ExternalPanelGUIClient.lua" type="client"/>

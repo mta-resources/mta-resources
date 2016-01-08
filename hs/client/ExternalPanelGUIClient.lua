@@ -3,7 +3,8 @@
 ------------------------------------------------------------------
 ExternalPanelGUI = {
   window = {},
-  isPlayerHouseOwner = false
+  isPlayerHouseOwner = false,
+  dbProperties = HousePropertiesShared.dbProperties
 }
 
 ------------------------------------------------------------------
@@ -101,14 +102,14 @@ end
 -- Updates house's price label
 ------------------------------------------------------------------
 function updatePriceLabel(icon)
-  guiSetText(obj.window.lblPrice, "Price: $" .. UtilitiesClient:toMoneyFormat(getElementData(icon, "price")))
+  guiSetText(obj.window.lblPrice, "Price: $" .. UtilitiesClient:toMoneyFormat(getElementData(icon, obj.dbProperties.price[1])))
 end
 
 ------------------------------------------------------------------
 -- Updates house's for sale status
 ------------------------------------------------------------------
 function updateIsOnSaleLabel(icon)
-  local isOnSale = getElementData(icon, "for_sale")
+  local isOnSale = getElementData(icon, obj.dbProperties.forSale)
   local text = ""
   if isOnSale then text = "Yes"
   else text = "No" end
@@ -119,7 +120,7 @@ end
 -- Updates house's owner label
 ------------------------------------------------------------------
 function updateOwnerLabel(icon)
-  local owner = getElementData(icon, "owner")
+  local owner = getElementData(icon, obj.dbProperties.owner[1])
   if not owner or owner == "nil" then owner = "No owner yet" end
   guiSetText(obj.window.lblOwner, "Owner: " .. owner)
 end
@@ -128,7 +129,7 @@ end
 -- Updates house's open status 
 ------------------------------------------------------------------
 function updateIsOpenLabel(icon)
-  local isOpen = getElementData(icon, "open")
+  local isOpen = getElementData(icon, obj.dbProperties.open[1])
   if not isOpen then isOpen = "No"
   else isOpen = "Yes" end
   guiSetText(obj.window.lblIsOpen, "House open: " .. isOpen)
@@ -138,7 +139,7 @@ end
 -- 
 ------------------------------------------------------------------
 function updateOwnerStatusLabel(icon)
-  local owner = getElementData(icon, "owner")
+  local owner = getElementData(icon, obj.dbProperties.owner[1])
   local text = ""
   if not owner or owner == "nil" then text = "Offline" end
   guiSetText(obj.window.lblOwnerStatus, "Owner status: " .. text)
@@ -151,8 +152,8 @@ function enableOrDisableButtons(icon)
 
   triggerServerEvent("isPlayerHouseOwner", resourceRoot, icon)
   local isOwner   = obj.isPlayerHouseOwner
-  local isForSale = getElementData(icon, "for_sale") 
-  local isOpen    = getElementData(icon, "open")
+  local isForSale = getElementData(icon, obj.dbProperties.forSale[1]) 
+  local isOpen    = getElementData(icon, obj.dbProperties.open[1])
 
   if not isOwner then
     guiSetEnabled(obj.window.btnSetPrice, false)
@@ -192,7 +193,6 @@ end
 -- 
 ------------------------------------------------------------------
 function hideExternalPanel()
-  outputChatBox("AHSAHS HIDING")
   guiSetVisible(obj.window.window, false)
   showCursor(false)
 end
