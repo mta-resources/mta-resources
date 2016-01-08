@@ -56,6 +56,6 @@ function UtilitiesClient:toMoneyFormat(text)
   elseif length == 4 then
     return string.sub(text, 1, 1) .. "," .. string.sub(text, 2)
   end
-  
+
   return text
 end

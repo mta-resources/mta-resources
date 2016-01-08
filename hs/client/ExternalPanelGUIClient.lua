@@ -4,11 +4,12 @@
 ExternalPanelGUI = {
   window = {},
   isPlayerHouseOwner = false,
-  dbProperties = HousePropertiesShared.dbProperties
+  properties = HousePropertiesShared.properties,
+  managerAccount = HousePropertiesShared.properties.owner[2],
 }
 
 ------------------------------------------------------------------
--- 
+--
 ------------------------------------------------------------------
 local obj = ExternalPanelGUI
 
@@ -22,7 +23,7 @@ function createExternalPanel()
   local windHeight  = 240
   local screenWidth, screenHeight = guiGetScreenSize()
   local windX       = (screenWidth/2) - (windWidth/2)
-  local windY       = (screenHeight/2) - (windHeight/2) 
+  local windY       = (screenHeight/2) - (windHeight/2)
   obj.window.window = guiCreateWindow(windX, windY, windWidth, windHeight, "NGC - House System Panel", false)
   local window      = obj.window.window
 
@@ -45,22 +46,21 @@ function createExternalPanel()
   obj.window.lblSetPrice      = guiCreateLabel(15, 150, windWidth-30, 15, "Set house price: ", false, window)
   obj.window.edtSetPrice      = guiCreateEdit(15, 170, windWidth-215, 25, "", false, window)
   obj.window.btnSetPrice      = guiCreateButton(windWidth-195, 170, 180, 25, "Set price", false, window)
-  obj.window.btnToggleSale    = guiCreateButton(15, 200, 150, 25, "Toggle House Sale", false, window) 
-  obj.window.btnOpenClose     = guiCreateButton(170, 200, 160, 25, "Open/Close House", false, window) 
+  obj.window.btnToggleSale    = guiCreateButton(15, 200, 150, 25, "Toggle House Sale", false, window)
+  obj.window.btnOpenClose     = guiCreateButton(170, 200, 160, 25, "Open/Close House", false, window)
   obj.window.btnBuyHouse      = guiCreateButton(335, 200, 150, 25, "Buy house", false, window)
 
   addEventHandler("onClientGUIClick", obj.window.btnEnterHouse, function()
-    outputChatBox("MOHTFUCKAKA")
     enterHouse(localPlayer, getElementData(localPlayer, "current_house_icon"))
-  end)
+  end, false)
 
   addEventHandler("onClientGUIClick", obj.window.btnCloseWindow, function()
     hideExternalPanel()
-  end)
+  end, false)
 
   addEventHandler("onClientGUIClick", obj.window.btnBuyHouse, function()
     buyHouse()
-  end)
+  end, false)
 
   guiSetVisible(obj.window.window, false)
 end
@@ -90,7 +90,7 @@ end
 ------------------------------------------------------------------
 -- Updates label values
 ------------------------------------------------------------------
-function updateLabelValues(icon)  
+function updateLabelValues(icon)
   updatePriceLabel(icon)
   updateIsOnSaleLabel(icon)
   updateOwnerLabel(icon)
@@ -102,14 +102,14 @@ end
 -- Updates house's price label
 ------------------------------------------------------------------
 function updatePriceLabel(icon)
-  guiSetText(obj.window.lblPrice, "Price: $" .. UtilitiesClient:toMoneyFormat(getElementData(icon, obj.dbProperties.price[1])))
+  guiSetText(obj.window.lblPrice, "Price: $" .. UtilitiesClient:toMoneyFormat(getElementData(icon, obj.properties.price[1])))
 end
 
 ------------------------------------------------------------------
 -- Updates house's for sale status
 ------------------------------------------------------------------
 function updateIsOnSaleLabel(icon)
-  local isOnSale = getElementData(icon, obj.dbProperties.forSale)
+  local isOnSale = getElementData(icon, obj.properties.forSale[1])
   local text = ""
   if isOnSale then text = "Yes"
   else text = "No" end
@@ -120,26 +120,26 @@ end
 -- Updates house's owner label
 ------------------------------------------------------------------
 function updateOwnerLabel(icon)
-  local owner = getElementData(icon, obj.dbProperties.owner[1])
-  if not owner or owner == "nil" then owner = "No owner yet" end
+  local owner = getElementData(icon, obj.properties.owner[1])
+  if not owner or owner == "nil" or owner == obj.managerAccount then owner = "No owner yet" end
   guiSetText(obj.window.lblOwner, "Owner: " .. owner)
 end
 
 ------------------------------------------------------------------
--- Updates house's open status 
+-- Updates house's open status
 ------------------------------------------------------------------
 function updateIsOpenLabel(icon)
-  local isOpen = getElementData(icon, obj.dbProperties.open[1])
+  local isOpen = getElementData(icon, obj.properties.open[1])
   if not isOpen then isOpen = "No"
   else isOpen = "Yes" end
   guiSetText(obj.window.lblIsOpen, "House open: " .. isOpen)
 end
 
 ------------------------------------------------------------------
--- 
+--
 ------------------------------------------------------------------
 function updateOwnerStatusLabel(icon)
-  local owner = getElementData(icon, obj.dbProperties.owner[1])
+  local owner = getElementData(icon, obj.properties.owner[1])
   local text = ""
   if not owner or owner == "nil" then text = "Offline" end
   guiSetText(obj.window.lblOwnerStatus, "Owner status: " .. text)
@@ -152,8 +152,8 @@ function enableOrDisableButtons(icon)
 
   triggerServerEvent("isPlayerHouseOwner", resourceRoot, icon)
   local isOwner   = obj.isPlayerHouseOwner
-  local isForSale = getElementData(icon, obj.dbProperties.forSale[1]) 
-  local isOpen    = getElementData(icon, obj.dbProperties.open[1])
+  local isForSale = getElementData(icon, obj.properties.forSale[1])
+  local isOpen    = getElementData(icon, obj.properties.open[1])
 
   if not isOwner then
     guiSetEnabled(obj.window.btnSetPrice, false)
@@ -174,7 +174,7 @@ function enableOrDisableButtons(icon)
 end
 
 ------------------------------------------------------------------
--- 
+--
 ------------------------------------------------------------------
 function isPlayerHouseOwner(isOwner)
   obj.isPlayerHouseOwner = isOwner
@@ -183,14 +183,14 @@ addEvent("isPlayerHouseOwner", true)
 addEventHandler("isPlayerHouseOwner", resourceRoot, isPlayerHouseOwner)
 
 ------------------------------------------------------------------
--- 
+--
 ------------------------------------------------------------------
 function enterHouse(player, icon)
-  triggerServerEvent("takePlayerToHouse", resourceRoot, icon)
+  triggerServerEvent("warpPlayerToHouse", resourceRoot, icon)
 end
 
 ------------------------------------------------------------------
--- 
+--
 ------------------------------------------------------------------
 function hideExternalPanel()
   guiSetVisible(obj.window.window, false)
