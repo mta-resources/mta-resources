@@ -66,6 +66,15 @@ function createHouseAccount(index)
   return account
 end
 
+function buyHouse(house)
+  local playerMoney = getPlayerMoney(client)
+  local price       = getElementData(house, "price")
+  if playerMoney < price then return false end -- insert message later
+  takePlayerMoney(client, price)
+end
+addEvent("buyHouseEvent", true)
+addEventHandler("buyHouseEvent", resourceRoot, buyHouse)
+
 ------------------------------------------------------------------
 -- Removes all house accounts
 -- DANGEROUS, so this function probably won't stay

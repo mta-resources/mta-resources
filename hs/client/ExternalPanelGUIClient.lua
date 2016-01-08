@@ -57,7 +57,19 @@ function createExternalPanel()
     hideExternalPanel()
   end)
 
+  addEventHandler("onClientGUIClick", obj.window.btnBuyHouse, function()
+    buyHouse()
+  end)
+
   guiSetVisible(obj.window.window, false)
+end
+
+------------------------------------------------------------------
+-- Buy house
+------------------------------------------------------------------
+function buyHouse()
+  local house = getElementData(localPlayer, "current_house_icon")
+  triggerServerEvent("buyHouseEvent", resourceRoot, house)
 end
 
 ------------------------------------------------------------------
