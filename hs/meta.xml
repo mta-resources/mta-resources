@@ -8,5 +8,6 @@
   <script src="client/ExternalPanelGUIClient.lua" type="client"/>
   <script src="client/MainClient.lua" type="client"/>
 
+  <script src="server/UtilitiesServer.lua" type="server"/>
   <script src="server/MainServer.lua" type="server"/>
 </meta>

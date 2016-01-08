@@ -18,6 +18,14 @@ function onHouseIconHit(player, sameDimension, icon)
 
   outputChatBox("Press Z to open House Panel.", 255, 0, 0)
   setIsPlayerOnHouseIcon(player, true)
+  setCurrentIconInPlayer(player, icon)
+end
+
+------------------------------------------------------------------
+-- Set the current icon where player is on
+------------------------------------------------------------------
+function setCurrentIconInPlayer(player, icon)
+  setElementData(player, "current_house_icon", icon)
 end
 
 ------------------------------------------------------------------
