@@ -65,18 +65,16 @@ function createExitInHouses(house)
   local x           = getElementData(house, obj.properties.insideX[1])
   local y           = getElementData(house, obj.properties.insideY[1])
   local z           = getElementData(house, obj.properties.insideZ[1])
-  local exitMarker  = createMarker(x, y, z-1, "cylinder", 1, 255, 0, 0, 200) -- @toDo: change color and alpha
+  local exitMarker  = createMarker(x, y, z, "cylinder", 1, 255, 0, 0, 200) -- @toDo: change color and alpha
   setElementInterior(exitMarker, getElementData(house, obj.properties.interior[1]))
   exitMarker = copyElementDataFromHouseToMarker(house, exitMarker)
 
-  outputChatBox("OHHH BOY")
-
   addEventHandler("onMarkerHit", exitMarker, function(element, matchDimension)
-    outputChatBox(">>> OMG")
     if not matchDimension then return false end
     if not getElementType(element) == "player" then return false end
     quitHouse(element, source)
   end, false)
+
 end
 
 ------------------------------------------------------------------
@@ -84,7 +82,8 @@ end
 ------------------------------------------------------------------
 function copyElementDataFromHouseToMarker(house, marker)
   for i, property in pairs(obj.properties) do
-    setElementData(marker, property[1], getElementData(house, property[1]))
+    local property = getElementData(house, property[1])
+    setElementData(marker, property[1], property)
   end
   return marker
 end
@@ -93,12 +92,15 @@ end
 -- Takes player out from house
 ------------------------------------------------------------------
 function quitHouse(player, marker)
-  outputChatBox("MOTHERFUCKER")
-  local x = getElementData(marker, obj.properties.outsideX[1])
-  local y = getElementData(marker, obj.properties.outsideY[1])
-  local z = getElementData(marker, obj.properties.outsideZ[1])
+  local x   = getElementData(marker, obj.properties.outsideX[1])
+  local y   = getElementData(marker, obj.properties.outsideY[1])
+  local z   = getElementData(marker, obj.properties.outsideZ[1])
+  local rx  = getElementData(marker, obj.properties.outsideRX[1])
+  local ry  = getElementData(marker, obj.properties.outsideRY[1])
+  local rz  = getElementData(marker, obj.properties.outsideRZ[1])
   setElementPosition(player, x, y, z)
   setElementInterior(player, 0)
+  setElementRotation(player, rx, ry, rz)
 end
 
 ------------------------------------------------------------------
