@@ -20,6 +20,7 @@ HousePropertiesShared = {
     outsideRY = {"outside_ry", false},
     outsideZ = {"outside_z", false},
     outsideRZ = {"outside_rz", false},
+    dimension = {"dimension", false},
   },
 }
 

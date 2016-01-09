@@ -186,7 +186,7 @@ addEventHandler("isPlayerHouseOwner", resourceRoot, isPlayerHouseOwner)
 --
 ------------------------------------------------------------------
 function enterHouse(player, icon)
-  triggerServerEvent("warpPlayerToHouse", resourceRoot, icon)
+  triggerServerEvent("enterHouse", resourceRoot, icon)
 end
 
 ------------------------------------------------------------------

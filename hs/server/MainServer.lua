@@ -58,6 +58,7 @@ function createHouseManagerAccount()
   return account
 end
 
+local counter = 0
 ------------------------------------------------------------------
 -- Creates markers that allows user to quit their houses
 ------------------------------------------------------------------
@@ -67,7 +68,8 @@ function createExitInHouses(house)
   local z           = getElementData(house, obj.properties.insideZ[1])
   local exitMarker  = createMarker(x, y, z, "cylinder", 1, 255, 0, 0, 200) -- @toDo: change color and alpha
   setElementInterior(exitMarker, getElementData(house, obj.properties.interior[1]))
-  exitMarker = copyElementDataFromHouseToMarker(house, exitMarker)
+  setElementDimension(exitMarker, getElementData(house, obj.properties.dimension[1]))
+  copyElementDataFromHouseToMarker(house, exitMarker)
 
   addEventHandler("onMarkerHit", exitMarker, function(element, matchDimension)
     if not matchDimension then return false end
@@ -82,10 +84,9 @@ end
 ------------------------------------------------------------------
 function copyElementDataFromHouseToMarker(house, marker)
   for i, property in pairs(obj.properties) do
-    local property = getElementData(house, property[1])
-    setElementData(marker, property[1], property)
+    local data = getElementData(house, property[1])
+    setElementData(marker, property[1], data)
   end
-  return marker
 end
 
 ------------------------------------------------------------------
@@ -101,6 +102,7 @@ function quitHouse(player, marker)
   setElementPosition(player, x, y, z)
   setElementInterior(player, 0)
   setElementRotation(player, rx, ry, rz)
+  setElementDimension(player, 0)
 end
 
 ------------------------------------------------------------------
@@ -117,8 +119,10 @@ end
 ------------------------------------------------------------------
 function houseAccountDataToElementData(icon, account)
   for i, property in pairs(obj.properties) do
-    setElementData(icon, property[1], getAccountData(account, property[1]) or property[2])
+    local data = getAccountData(account, property[1]) or property[2]
+    setElementData(icon, property[1], data)
   end
+  return icon
 end
 
 ------------------------------------------------------------------
@@ -145,6 +149,7 @@ function createHouseAccount(index)
   setAccountData(account, obj.properties.outsideRX[1], currentHouse.entrance[4])
   setAccountData(account, obj.properties.outsideRY[1], currentHouse.entrance[5])
   setAccountData(account, obj.properties.outsideRZ[1], currentHouse.entrance[6])
+  setAccountData(account, obj.properties.dimension[1], currentHouse.dimension)
 
   return account
 end
@@ -199,7 +204,7 @@ addEventHandler("isPlayerHouseOwner", resourceRoot, isPlayerHouseOwner)
 ------------------------------------------------------------------
 --
 ------------------------------------------------------------------
-function warpPlayerToHouse(house)
+function enterHouse(house)
   local interior    = getElementData(house, obj.properties.interior[1])
   local entrance_x  = getElementData(house, obj.properties.insideX[1])
   local entrance_y  = getElementData(house, obj.properties.insideY[1])
@@ -210,9 +215,10 @@ function warpPlayerToHouse(house)
   setElementPosition(client, entrance_x, entrance_y, entrance_z)
   setElementInterior(client, interior)
   setElementRotation(client, entrance_rx, entrance_ry, entrance_rz)
+  setElementDimension(client, getElementData(house, obj.properties.dimension[1]))
 end
-addEvent("warpPlayerToHouse", true)
-addEventHandler("warpPlayerToHouse", resourceRoot, warpPlayerToHouse)
+addEvent("enterHouse", true)
+addEventHandler("enterHouse", resourceRoot, enterHouse)
 
 ------------------------------------------------------------------
 -- Event handlers

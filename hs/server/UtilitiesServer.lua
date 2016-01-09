@@ -20,6 +20,16 @@ function getPlayerFromAccount(account)
 end
 
 ------------------------------------------------------------------
+-- Gets a possible boolean and converts it in a string
+------------------------------------------------------------------
+function UtilitiesServer:booleanToString(bool)
+  if bool == false then return "false" end
+  if bool == true then return "true" end
+  if bool == nil then return "nil" end
+  return bool
+end
+
+------------------------------------------------------------------
 -- Warp player to Grove Street
 ------------------------------------------------------------------
 addCommandHandler("home", function(player)
