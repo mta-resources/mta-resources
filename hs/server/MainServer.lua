@@ -7,7 +7,10 @@ MainServer = {
   accPassword = "NGC$House@System12j",
   accDataList = {},
   houseManagerName = HousePropertiesShared.properties.owner[2],
-  properties = HousePropertiesShared.properties
+  properties = HousePropertiesShared.properties,
+  blueIcon = 1272,
+  greenIcon = 1273,
+  dimensionCounter = {}
 }
 
 ------------------------------------------------------------------
@@ -58,7 +61,6 @@ function createHouseManagerAccount()
   return account
 end
 
-local counter = 0
 ------------------------------------------------------------------
 -- Creates markers that allows user to quit their houses
 ------------------------------------------------------------------
@@ -149,10 +151,28 @@ function createHouseAccount(index)
   setAccountData(account, obj.properties.outsideRX[1], currentHouse.entrance[4])
   setAccountData(account, obj.properties.outsideRY[1], currentHouse.entrance[5])
   setAccountData(account, obj.properties.outsideRZ[1], currentHouse.entrance[6])
-  setAccountData(account, obj.properties.dimension[1], currentHouse.dimension)
+  setAccountData(account, obj.properties.accountName[1], obj.accPrefix .. index)
+
+  -- Creates different dimension for those interiors that are equals
+  local interior  = currentHouse.interior.interior
+  if not obj.dimensionCounter[interior] then obj.dimensionCounter[interior] = 0
+  else obj.dimensionCounter[interior] = obj.dimensionCounter[interior] + 1 end
+  setAccountData(account, obj.properties.dimension[1], obj.dimensionCounter[interior])
 
   return account
 end
+
+------------------------------------------------------------------
+-- Open or close a house
+------------------------------------------------------------------
+function openCloseHouse(house)
+  local currentState = getElementData(house, obj.properties.open[1])
+  local houseAccName = getElementData(house, obj.properties.accountName[1])
+  setElementData(house, obj.properties.open, not currentState)
+  setAccountData(getAccount(houseAccName, obj.accPassword), obj.properties.open, not currentState)
+end
+addEvent("openCloseHouseEvent", true)
+addEventHandler("openCloseHouseEvent", resourceRoot, openCloseHouse)
 
 ------------------------------------------------------------------
 -- Buy a house
@@ -167,9 +187,35 @@ function buyHouse(house)
   end
 
   takePlayerMoney(client, price)
+
+  local buyerAccName          = getAccountName(getPlayerAccount(client))
+  local accountNameDataIndex  = obj.properties.accountName[1]
+  local ownerDataIndex        = obj.properties.owner[1]
+  setElementData(house, ownerDataIndex, buyerAccName)
+  setAccountData(getAccount(getElementData(house, accountNameDataIndex)), ownerDataIndex, buyerAccName)
+
+  setHouseSale(house, false)
 end
 addEvent("buyHouseEvent", true)
 addEventHandler("buyHouseEvent", resourceRoot, buyHouse)
+
+------------------------------------------------------------------
+-- Toggle house sale or not
+------------------------------------------------------------------
+function setHouseSale(houseIcon, isSale)
+  if not type(isSale) == "boolean" then return false end
+  if not houseIcon then return false end
+  if not getElementData(houseIcon, "is_house_icon") then return false end
+
+  local houseAccName = getAccount(getElementData(houseIcon, obj.properties.accountName[1]), obj.accPassword)
+  if not houseAccName then return false end
+  setElementData(houseIcon, obj.properties.forSale[1], isSale)
+  setAccountData(houseAccName, obj.properties.forSale[1], isSale)
+
+  if isSale then setPickupType(houseIcon, 3, obj.greenIcon)
+  else setPickupType(houseIcon, 3, obj.blueIcon)
+  end
+end
 
 ------------------------------------------------------------------
 -- Removes all house accounts

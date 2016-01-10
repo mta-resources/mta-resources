@@ -62,6 +62,10 @@ function createExternalPanel()
     buyHouse()
   end, false)
 
+  addEventHandler("onClientGUIClick", obj.window.btnOpenClose, function()
+    openCloseHouse()
+  end, false)
+
   guiSetVisible(obj.window.window, false)
 end
 
@@ -71,6 +75,15 @@ end
 function buyHouse()
   local house = getElementData(localPlayer, "current_house_icon")
   triggerServerEvent("buyHouseEvent", resourceRoot, house)
+end
+
+------------------------------------------------------------------
+-- Open or close a house
+------------------------------------------------------------------
+function openCloseHouse()
+  local house = getElementData(localPlayer, "current_house_icon")
+  triggerServerEvent("openCloseHouseEvent", resourceRoot, house)
+  guiSetEnabled(obj.window.btnEnterHouse, getElementData(house, obj.properties.open))
 end
 
 ------------------------------------------------------------------
@@ -155,21 +168,16 @@ function enableOrDisableButtons(icon)
   local isForSale = getElementData(icon, obj.properties.forSale[1])
   local isOpen    = getElementData(icon, obj.properties.open[1])
 
-  if not isOwner then
-    guiSetEnabled(obj.window.btnSetPrice, false)
-    guiSetEnabled(obj.window.btnToggleSale, false)
-    guiSetEnabled(obj.window.btnOpenClose, false)
-  end
+  if not isOwner then isOwner = false end -- in case of nil
+  guiSetEnabled(obj.window.btnSetPrice, isOwner)
+  guiSetEnabled(obj.window.btnToggleSale, isOwner)
+  guiSetEnabled(obj.window.btnOpenClose, isOwner)
 
-  if not isForSale then
-    guiSetEnabled(obj.window.btnBuyHouse, false)
-  end
+  if not isForSale then isForSale = false end -- in case of nil
+  guiSetEnabled(obj.window.btnBuyHouse, isForSale)
 
-  if not isOpen then
-    guiSetEnabled(obj.window.btnEnterHouse, false)
-  else
-    guiSetEnabled(obj.window.btnEnterHouse, true)
-  end
+  if not isOpen then isOpen = false end -- in case of nil
+  guiSetEnabled(obj.window.btnEnterHouse, isOpen)
 
 end
 

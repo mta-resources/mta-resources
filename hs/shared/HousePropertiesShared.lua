@@ -21,6 +21,7 @@ HousePropertiesShared = {
     outsideZ = {"outside_z", false},
     outsideRZ = {"outside_rz", false},
     dimension = {"dimension", false},
+    accountName = {"accountName", false},
   },
 }
 
