@@ -36,7 +36,15 @@ function createHouses()
 
     setElementData(house, "is_house_icon", true)
     houseAccountDataToElementData(house, account)
+    changePickpuModelBySaleStatus(house)
     createExitInHouses(house)
+  end
+end
+
+function changePickpuModelBySaleStatus(pickup)
+  local forSale = getElementData(pickup, obj.properties.forSale[1])
+  if not forSale then setPickupType(pickup, 3, obj.blueIcon)
+  else setPickupType(pickup, 3, obj.greenIcon)
   end
 end
 
@@ -124,7 +132,6 @@ function houseAccountDataToElementData(icon, account)
     local data = getAccountData(account, property[1]) or property[2]
     setElementData(icon, property[1], data)
   end
-  return icon
 end
 
 ------------------------------------------------------------------
@@ -191,6 +198,7 @@ function buyHouse(house)
   local buyerAccName          = getAccountName(getPlayerAccount(client))
   local accountNameDataIndex  = obj.properties.accountName[1]
   local ownerDataIndex        = obj.properties.owner[1]
+  local forSaleDataIndex      = obj.properties.forSale[1]
   setElementData(house, ownerDataIndex, buyerAccName)
   setAccountData(getAccount(getElementData(house, accountNameDataIndex)), ownerDataIndex, buyerAccName)
 
@@ -207,10 +215,10 @@ function setHouseSale(houseIcon, isSale)
   if not houseIcon then return false end
   if not getElementData(houseIcon, "is_house_icon") then return false end
 
-  local houseAccName = getAccount(getElementData(houseIcon, obj.properties.accountName[1]), obj.accPassword)
-  if not houseAccName then return false end
+  local houseAcc = getAccount(getElementData(houseIcon, obj.properties.accountName[1]), obj.accPassword)
+  if not houseAcc then return false end
   setElementData(houseIcon, obj.properties.forSale[1], isSale)
-  setAccountData(houseAccName, obj.properties.forSale[1], isSale)
+  setAccountData(houseAcc, obj.properties.forSale[1], isSale)
 
   if isSale then setPickupType(houseIcon, 3, obj.greenIcon)
   else setPickupType(houseIcon, 3, obj.blueIcon)
@@ -239,7 +247,7 @@ addCommandHandler("removeHouseAccounts", removeAllHouseAccount)
 ------------------------------------------------------------------
 function isPlayerHouseOwner(house)
   local houseOwnerAccount = getElementData(house, obj.properties.owner[1]) or false
-  local playerAccount     = getPlayerAccount(client)
+  local playerAccount     = getAccountName(getPlayerAccount(client))
   local result            = false
   if houseOwnerAccount == playerAccount then result = true end
   triggerClientEvent(client, "isPlayerHouseOwner", client, result)

@@ -162,9 +162,14 @@ end
 -- Enables or disables buttons
 ------------------------------------------------------------------
 function enableOrDisableButtons(icon)
-
   triggerServerEvent("isPlayerHouseOwner", resourceRoot, icon)
-  local isOwner   = obj.isPlayerHouseOwner
+end
+
+------------------------------------------------------------------
+-- Check if player is house owner
+------------------------------------------------------------------
+function isPlayerHouseOwner(isOwner)
+
   local isForSale = getElementData(icon, obj.properties.forSale[1])
   local isOpen    = getElementData(icon, obj.properties.open[1])
 
@@ -179,13 +184,6 @@ function enableOrDisableButtons(icon)
   if not isOpen then isOpen = false end -- in case of nil
   guiSetEnabled(obj.window.btnEnterHouse, isOpen)
 
-end
-
-------------------------------------------------------------------
---
-------------------------------------------------------------------
-function isPlayerHouseOwner(isOwner)
-  obj.isPlayerHouseOwner = isOwner
 end
 addEvent("isPlayerHouseOwner", true)
 addEventHandler("isPlayerHouseOwner", resourceRoot, isPlayerHouseOwner)
